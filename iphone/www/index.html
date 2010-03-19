@@ -16,7 +16,7 @@
       document.getElementById("devicename").innerHTML = device.name;
       document.getElementById("uuid").innerHTML       = device.uuid;
     }
-    
+
     function getLocation() {
       debug.log("getLocation");
       navigator.notification.activityStart();
@@ -29,24 +29,24 @@
 	  };
       navigator.geolocation.getCurrentPosition(suc,fail);
     }
-    
+
     function customAlert(){
       navigator.notification.alert("Custom alert", "Custom title", "Yup!");
     }
-  
+
     function beep(){
       debug.log("beep");
       navigator.notification.beep(2);
     }
-  
+
     function vibrate(){
       debug.log("vibrate");
       navigator.notification.vibrate(0);
     }
-  
+
     function getContactsPrompt(){
       debug.log("getContactsPrompt");
-	  
+
 		var pageSize = prompt("Page size", 10);
 		if (pageSize) {
 			var pageNumber = prompt("Page number", 1);
@@ -69,11 +69,11 @@
 			return;
 		}
 	}
-		
+
     function getContacts(pageSize, pageNumber, nameFilter){
       debug.log("getContacts");
       var fail = function(){};
-	  
+
 	  var options = {};
 	  if (pageSize)
 		options.pageSize = pageSize;
@@ -81,32 +81,32 @@
 		options.pageNumber = pageNumber;
 	  if (nameFilter)
 		options.nameFilter = nameFilter;
-	  
+
 	  var durationOptions = { minDuration : 2 };
 	  navigator.notification.loadingStart(durationOptions);
       navigator.ContactManager.getAllContacts(getContacts_Return, fail, options);
     }
-	
+
 	function getContacts_Return(contactsArray)
 	{
 		var names = "";
-		
+
 		for (var i = 0; i < contactsArray.length; i++) {
 			var con = new Contact();
 			con.firstName = contactsArray[i].firstName;
 			con.lastName = contactsArray[i].lastName;
 			con.phoneNumber = contactsArray[i].phoneNumber;
-			con.address = contactsArray[i].address;	
+			con.address = contactsArray[i].address;
 			names += con.displayName();
-			
+
 			if (i+1 != contactsArray.length)
 				names += ",";
 		}
-		
+
 		navigator.notification.loadingStop();
 		navigator.notification.alert(names, "Contacts Returned", "Dismiss");
 	}
-	
+
 	var __editDisplayFirstContact = false;
 	function displayFirstContact(allowsEditing)
 	{
@@ -114,11 +114,11 @@
 	  __editDisplayFirstContact = allowsEditing;
 	  navigator.ContactManager.getAllContacts(displayFirstContact_Return, null, options);
 	}
-	
+
 	function displayFirstContact_Return(contactsArray)
 	{
 		var options = { allowsEditing: __editDisplayFirstContact };
-		
+
 		for (var i = 0; i < contactsArray.length; i++) {
 			navigator.ContactManager.displayContact(contactsArray[i].recordID, null, options);
 		}
@@ -128,14 +128,14 @@
       debug.log("contactCount");
       navigator.ContactManager.contactsCount(showContactsCount);
     }
-	
+
 	function showContactsCount(count){
 		alert("Number of contacts: " + count);
 	}
 
 	function addContact(gui){
 		var sample_contact = { 'firstName': 'John', 'lastName' : 'Smith', 'phoneNumber': '555-5555' };
-	
+
 		if (gui) {
 			navigator.ContactManager.newContact(sample_contact, null, { 'gui': true });
 		} else {
@@ -152,25 +152,25 @@
 			}
 		}
 	}
-	
+
 	function chooseContact(allowsEditing)
 	{
 		var options = { allowsEditing: allowsEditing };
 		navigator.ContactManager.chooseContact(chooseContact_Return, options);
 	}
-	
+
 	function chooseContact_Return(contact)
 	{
 		if (contact) {
 			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Returned", "Dismiss");
 		}
 	}
-    
+
 	function removeContact()
 	{
 		navigator.ContactManager.chooseContact(removeContact_Return, null);
 	}
-	
+
 	function removeContact_Return(contact)
 	{
 		if (contact) {
@@ -184,7 +184,7 @@
 			navigator.notification.alert(contact.firstName + " " + contact.lastName, "Contact Removed", "Dismiss");
 		}
 	}
-	
+
 
     function watchAccel() {
       debug.log("watchAccel");
@@ -198,15 +198,15 @@
       opt.frequency = 100;
       timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
     }
-      
+
     function roundNumber(num) {
       var dec = 3;
       var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
       return result;
     }
 
-    function preventBehavior(e) { 
-      e.preventDefault(); 
+    function preventBehavior(e) {
+      e.preventDefault();
     };
 
     PhoneGap.addConstructor(function(){
@@ -214,7 +214,7 @@
       deviceInfo();
       document.addEventListener('orientationChanged', function(e) { debug.log("Orientation changed to " + e.orientation); }, false);
     });
-    
+
     </script>
   </head>
   <body id="stage" class="theme">
@@ -251,7 +251,7 @@
 	  <br />
 -->
       <div id="Page1">
-		<h2>My name is Chris McCulloh</h2>
+		<h2>My name is Christopher McCulloh</h2>
         <h2>this file is located at iphone/www/index.html</h2>
         <div id="info" class="Panel">
           <table>
