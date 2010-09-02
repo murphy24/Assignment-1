@@ -1,26 +1,4 @@
 package com.phonegap;
-/* License (MIT)
- * Copyright (c) 2008 Nitobi
- * website: http://phonegap.com
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,28 +7,28 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class GpsListener implements LocationListener {
-	
+
 	private Context mCtx;
 	private Location cLoc;
 	private LocationManager mLocMan;
 	private static final String LOG_TAG = "PhoneGap";
 	private GeoListener owner;
 	private boolean hasData = false;
-	
+
 	public GpsListener(Context ctx, int interval, GeoListener m)
 	{
 		owner = m;
 		mCtx = ctx;
 		this.start(interval);
 	}
-	
+
 	public Location getLocation()
 	{
 		cLoc = mLocMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 		hasData = true;
 		return cLoc;
 	}
-	
+
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
 		Log.d(LOG_TAG, "The provider " + provider + " is disabled");
@@ -90,7 +68,7 @@ public class GpsListener implements LocationListener {
 	public boolean hasLocation() {
 		return hasData;
 	}
-	
+
 	public void start(int interval)
 	{
 		mLocMan = (LocationManager) mCtx.getSystemService(Context.LOCATION_SERVICE);
@@ -102,5 +80,5 @@ public class GpsListener implements LocationListener {
 	{
 		mLocMan.removeUpdates(this);
 	}
-	
+
 }

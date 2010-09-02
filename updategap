@@ -29,7 +29,7 @@ class Build
       f.puts "sdk.dir=#{ @android_sdk_path }"
     end 
     Dir.chdir(@framework_dir)
-    `ant jar`
+    'ant jar'
     Dir.chdir(@android_dir)
   end
   

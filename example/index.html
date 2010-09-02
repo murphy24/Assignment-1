@@ -5,15 +5,15 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>PhoneGap</title>
 	  <link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>	  
+	  <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
 	  <script type="text/javascript" charset="utf-8">
-	  
-    var deviceInfo = function(){      
+
+    var deviceInfo = function(){
       document.getElementById("platform").innerHTML = device.platform;
       document.getElementById("version").innerHTML = device.version;
       document.getElementById("uuid").innerHTML = device.uuid;
     }
-    
+
     var getLocation = function() {
       var suc = function(p){
 		    alert(p.coords.latitude + " " + p.coords.longitude);
@@ -21,21 +21,21 @@
       var fail = function(){};
       navigator.geolocation.getCurrentPosition(suc,fail);
     }
-    
+
     var beep = function(){
 	    navigator.notification.beep(2);
     }
-	
+
   	var vibrate = function(){
   	  navigator.notification.vibrate(0);
   	}
-	
+
   	var getContact = function(){
   	  var suc = function(c){ alert("Contact 4: " + c.contacts[3].name); };
   		var fail = function(){};
   		navigator.ContactManager.get(suc, fail);
   	}
-  	
+
   	var watchAccel = function() {
   		var suc = function(a){
   			document.getElementById('x').innerHTML = roundNumber(a.x);
@@ -47,22 +47,22 @@
   		opt.frequency = 100;
   		timer = navigator.accelerometer.watchAcceleration(suc,fail,opt);
   	}
-    	
+
     function roundNumber(num) {
       var dec = 3;
       var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
       return result;
     }
-    
-	var preventBehavior = function(e) { 
-      e.preventDefault(); 
+
+	var preventBehavior = function(e) {
+      e.preventDefault();
     };
 
     function show_pic()
     {
       var viewport = document.getElementById('viewport');
       viewport.style.display = "";
-      navigator.camera.getPicture(dump_pic, fail, { quality: 50 }); 
+      navigator.camera.getPicture(dump_pic, fail, { quality: 50 });
     }
 
     function dump_pic(data)
@@ -90,7 +90,7 @@
 
   	// This is just to do this.
   	function readFile()
-  	{  	
+  	{
    		navigator.file.read('/sdcard/phonegap.txt', fail , fail);
   	}
 
@@ -101,23 +101,23 @@
 
 	function get_contacts()
 	{
-		navigator.ContactManager.getAllContacts(count_contacts, fail, null);		
+		navigator.ContactManager.getAllContacts(count_contacts, fail, null);
 	}
 
 	function count_contacts(contacts)
-	{		
+	{
 		alert(contacts.length);
 	}
-  	
+
 	function init(){
 		document.addEventListener("touchmove", preventBehavior, false);
-		document.addEventListener("deviceready", deviceInfo, true);		
-	}	
-	
+		document.addEventListener("deviceready", deviceInfo, true);
+	}
+
   </script>
   </head>
   <body onload="init();" id="stage" class="theme">
-    <h1>Welcome to PhoneGap!</h1>
+    <h1>My name is Christopher McCulloh</h1>
     <h2>this file is located at assets/index.html</h2>
     <div id="info">
       <h4>Platform: <span id="platform">&nbsp;</span></h4>
@@ -136,8 +136,8 @@
     <a href="#" class="btn large" onclick="vibrate();">Vibrate</a>
     <a href="#" class="btn large" onclick="show_pic();">Get a Picture</a>
     <a href="#" class="btn large" onclick="get_contacts();">Get phone's contacts</a>
-    <div id="viewport" class="viewport" style="display: none;">       
+    <div id="viewport" class="viewport" style="display: none;">
       <img style="width:60px;height:60px" id="test_img" src="" />
-    </div> 
+    </div>
   </body>
 </html>

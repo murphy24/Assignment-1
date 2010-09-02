@@ -1,26 +1,5 @@
-	package com.phonegap;
-/* License (MIT)
- * Copyright (c) 2008 Nitobi
- * website: http://phonegap.com
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * Software), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
+package com.phonegap;
+
 
 
 import java.io.File;
@@ -63,14 +42,14 @@ import android.provider.MediaStore;
  * This class is the main Android activity that represents the PhoneGap
  * application.  It should be extended by the user to load the specific
  * html file that contains the application.
- * 
+ *
  * As an example:
- * 
+ *
  *     package com.phonegap.examples;
  *     import android.app.Activity;
  *     import android.os.Bundle;
  *     import com.phonegap.*;
- *     
+ *
  *     public class Examples extends DroidGap {
  *       @Override
  *       public void onCreate(Bundle savedInstanceState) {
@@ -80,12 +59,12 @@ import android.provider.MediaStore;
  *     }
  */
 public class DroidGap extends Activity {
-		
+
 	private static final String LOG_TAG = "DroidGap";
 	protected WebView appView;
 	protected ImageView splashScreen;
-	private LinearLayout root;	
-	
+	private LinearLayout root;
+
 	private Device gap;
 	private GeoBroker geo;
     private AccelListener accel;
@@ -100,62 +79,62 @@ public class DroidGap extends Activity {
 	private AudioHandler audio;
     private CallbackServer callbackServer;
 	private CommandManager commandManager;
-	
+
 	private Uri imageUri;
     private String url;							// The initial URL for our app
     private String baseUrl;						// The base of the initial URL for our app
-	
+
     /** Called when the activity is first created. */
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE); 
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN); 
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         // This builds the view.  We could probably get away with NOT having a LinearLayout, but I like having a bucket!
 
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(Color.BLACK);
-        root.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 
+        root.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
         		ViewGroup.LayoutParams.FILL_PARENT, 0.0F));
 
         /*
         splashScreen = new ImageView(this);
         splashScreen.setLayoutParams(new LinearLayout.LayoutParams(
         		ViewGroup.LayoutParams.FILL_PARENT,
-        		ViewGroup.LayoutParams.FILL_PARENT, 
+        		ViewGroup.LayoutParams.FILL_PARENT,
         		1.0F));
         splashScreen.setImageResource(R.drawable.splash);
-      
+
         root.addView(splashScreen);
  		*/
 
         initWebView();
-        
+
         root.addView(appView);
 
-        setContentView(root);        
+        setContentView(root);
 	}
-	
+
 	private void initWebView() {
 		appView = new WebView(DroidGap.this);
-		
+
         appView.setLayoutParams(new LinearLayout.LayoutParams(
         		ViewGroup.LayoutParams.FILL_PARENT,
-        		ViewGroup.LayoutParams.FILL_PARENT, 
+        		ViewGroup.LayoutParams.FILL_PARENT,
         		1.0F));
 
         WebViewReflect.checkCompatibility();
 
         if (android.os.Build.VERSION.RELEASE.startsWith("2.")) {
-        	appView.setWebChromeClient(new EclairClient(DroidGap.this));        	
+        	appView.setWebChromeClient(new EclairClient(DroidGap.this));
         }
         else {
         	appView.setWebChromeClient(new GapClient(DroidGap.this));
         }
-           
+
         appView.setWebViewClient(new GapViewClient(this));
 
         appView.setInitialScale(100);
@@ -169,9 +148,9 @@ public class DroidGap extends Activity {
 
     	Package pack = this.getClass().getPackage();
     	String appPackage = pack.getName();
-    	
+
         WebViewReflect.setStorage(settings, true, "/data/data/" + appPackage + "/app_database/");
-        
+
         // Turn on DOM storage!
         WebViewReflect.setDomStorage(settings);
         // Turn off native geolocation object in browser - we use our own :)
@@ -182,86 +161,86 @@ public class DroidGap extends Activity {
         	cupcakeStorage.setStorage(appPackage);
         }
 	}
-	
+
 	@Override
     /**
-     * Called by the system when the device configuration changes while your activity is running. 
-     * 
+     * Called by the system when the device configuration changes while your activity is running.
+     *
      * @param Configuration newConfig
      */
     public void onConfigurationChanged(Configuration newConfig) {
         //don't reload the current page when the orientation is changed
         super.onConfigurationChanged(newConfig);
-    } 
+    }
 
     @Override
     /**
-     * Called when the system is about to start resuming a previous activity. 
+     * Called when the system is about to start resuming a previous activity.
      */
     protected void onPause(){
         super.onPause();
 
         // Send pause event to JavaScript
         appView.loadUrl("javascript:try{PhoneGap.onPause.fire();}catch(e){};");
-        
+
         // Pause JavaScript timers (including setInterval)
         appView.pauseTimers();
     }
 
     @Override
     /**
-     * Called when the activity will start interacting with the user. 
+     * Called when the activity will start interacting with the user.
      */
     protected void onResume(){
         super.onResume();
 
         // Send resume event to JavaScript
         appView.loadUrl("javascript:try{PhoneGap.onResume.fire();}catch(e){};");
-        
+
         // Resume JavaScript timers (including setInterval)
         appView.resumeTimers();
     }
-    
+
     @Override
     /**
-     * The final call you receive before your activity is destroyed. 
+     * The final call you receive before your activity is destroyed.
      */
     public void onDestroy() {
     	super.onDestroy();
-    	
+
     	// Make sure pause event is sent if onPause hasn't been called before onDestroy
     	appView.loadUrl("javascript:try{PhoneGap.onPause.fire();}catch(e){};");
-    	
+
     	// Load blank page so that JavaScript onunload is called
     	appView.loadUrl("about:blank");
-    	    	
+
     	// Clean up objects
     	if (accel != null) {
     		accel.destroy();
     	}
     	if (launcher != null) {
-    		
+
     	}
     	if (mContacts != null) {
-    		
+
     	}
     	if (fs != null) {
-    		
+
     	}
     	if (netMan != null) {
-    		
+
     	}
     	if (mCompass != null) {
     		mCompass.destroy();
     	}
     	if (crypto != null) {
-    		
+
     	}
     	if (mKey != null) {
-    		
+
     	}
     	if (audio != null) {
-    		
+
     	}
     	if (callbackServer != null) {
     		callbackServer.destroy();
@@ -278,11 +257,11 @@ public class DroidGap extends Activity {
     	mContacts = new ContactManager(appView, this);
     	fs = new FileUtils(appView);
     	netMan = new NetworkManager(appView, this);
-    	mCompass = new CompassListener(appView, this);  
+    	mCompass = new CompassListener(appView, this);
     	crypto = new CryptoHandler(appView);
     	mKey = new BrowserKey(appView, this);
     	audio = new AudioHandler(appView, this);
-    	
+
     	// This creates the new javascript interfaces for PhoneGap
     	appView.addJavascriptInterface(commandManager, "CommandManager");
     	appView.addJavascriptInterface(gap, "DroidGap");
@@ -297,7 +276,7 @@ public class DroidGap extends Activity {
     	appView.addJavascriptInterface(audio, "GapAudio");
         appView.addJavascriptInterface(callbackServer, "CallbackServer");
     	appView.addJavascriptInterface(new SplashScreen(this), "SplashScreen");
-    	
+
     	if (android.os.Build.VERSION.RELEASE.startsWith("1."))
     	{
             cupcakeStorage = new Storage(appView, this);
@@ -306,10 +285,10 @@ public class DroidGap extends Activity {
         	appView.addJavascriptInterface(geo, "Geo");
     	}
     }
- 
+
     /**
      * Load the url into the webview.
-     * 
+     *
      * @param url
      */
     public void loadUrl(final String url) {
@@ -321,44 +300,44 @@ public class DroidGap extends Activity {
         else {
         	this.baseUrl = this.url;
         }
-	    
+
 	    this.runOnUiThread(new Runnable() {
 			public void run() {
 		        DroidGap.this.appView.loadUrl(url);
 	        }
         });
 	}
-    
+
     /**
      * Send JavaScript statement back to JavaScript.
-     * 
+     *
      * @param message
      */
     public void sendJavascript(String statement) {
     	this.callbackServer.sendJavascript(statement);
     }
-    
+
     /**
      * Get the port that the callback server is listening on.
-     * 
+     *
      * @return
      */
     public int getPort() {
     	return this.callbackServer.getPort();
     }
-	
+
   /**
     * Provides a hook for calling "alert" from javascript. Useful for
     * debugging your javascript.
   */
-	public class GapClient extends WebChromeClient {				
-		
+	public class GapClient extends WebChromeClient {
+
 		Context mCtx;
 		public GapClient(Context ctx)
 		{
 			mCtx = ctx;
 		}
-		
+
 		@Override
 	    public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
 	        Log.d(LOG_TAG, message);
@@ -375,52 +354,52 @@ public class DroidGap extends Activity {
 	        result.confirm();
 	        return true;
 	    }
-		
+
 		/*
 		 * This is the Code for the OK Button
 		 */
-		
+
 		public class GapOKDialog implements DialogInterface.OnClickListener {
 
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
 				dialog.dismiss();
-			}			
-		
+			}
+
 		}
-		
+
 		public class GapCancelDialog implements DialogInterface.OnClickListener {
 
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
 				dialog.dismiss();
-			}			
-		
+			}
+
 		}
-	  
+
 
 	}
-	
+
 	public final class EclairClient extends GapClient
-	{		
+	{
 		private String TAG = "PhoneGapLog";
 		private long MAX_QUOTA = 100 * 1024 * 1024;
-		
+
 		public EclairClient(Context ctx) {
 			super(ctx);
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		public void onExceededDatabaseQuota(String url, String databaseIdentifier, long currentQuota, long estimatedSize,
 		    	     long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater)
 		{
-		  Log.d(TAG, "event raised onExceededDatabaseQuota estimatedSize: " + Long.toString(estimatedSize) + " currentQuota: " + Long.toString(currentQuota) + " totalUsedQuota: " + Long.toString(totalUsedQuota));  	
-		  		  
+		  Log.d(TAG, "event raised onExceededDatabaseQuota estimatedSize: " + Long.toString(estimatedSize) + " currentQuota: " + Long.toString(currentQuota) + " totalUsedQuota: " + Long.toString(totalUsedQuota));
+
 			if( estimatedSize < MAX_QUOTA)
-		    	{	                                        
-		    	  //increase for 1Mb        		    	  		    	  
-		    		long newQuota = estimatedSize;		    		
-		    		Log.d(TAG, "calling quotaUpdater.updateQuota newQuota: " + Long.toString(newQuota) );  	
+		    	{
+		    	  //increase for 1Mb
+		    		long newQuota = estimatedSize;
+		    		Log.d(TAG, "calling quotaUpdater.updateQuota newQuota: " + Long.toString(newQuota) );
 		    		quotaUpdater.updateQuota(newQuota);
 		    	}
 		    else
@@ -428,25 +407,25 @@ public class DroidGap extends Activity {
 		    		// Set the quota to whatever it is and force an error
 		    		// TODO: get docs on how to handle this properly
 		    		quotaUpdater.updateQuota(currentQuota);
-		    	}		    	
-		}		
-		                    
+		    	}
+		}
+
 		// console.log in api level 7: http://developer.android.com/guide/developing/debug-tasks.html
 		public void onConsoleMessage(String message, int lineNumber, String sourceID)
-		{       
+		{
 			// This is a kludgy hack!!!!
-			Log.d(TAG, sourceID + ": Line " + Integer.toString(lineNumber) + " : " + message);              
+			Log.d(TAG, sourceID + ": Line " + Integer.toString(lineNumber) + " : " + message);
 		}
-		
+
 		@Override
 		public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
 			// TODO Auto-generated method stub
 			super.onGeolocationPermissionsShowPrompt(origin, callback);
 			callback.invoke(origin, true, false);
 		}
-		
+
 	}
-	
+
     /**
      * The webview client receives notifications about appView
      */
@@ -458,17 +437,17 @@ public class DroidGap extends Activity {
 
         /**
          * Constructor.
-         * 
+         *
          * @param ctx
          */
         public GapViewClient(DroidGap ctx) {
             mCtx = ctx;
         }
-        
+
         /**
-         * Give the host application a chance to take over the control when a new url 
+         * Give the host application a chance to take over the control when a new url
          * is about to be loaded in the current WebView.
-         * 
+         *
          * @param view			The WebView that is initiating the callback.
          * @param url			The url to be loaded.
          * @return				true to override, false for default behavior
@@ -487,7 +466,7 @@ public class DroidGap extends Activity {
         		}
         		return true;
         	}
-        	
+
         	// If displaying map (geo:0,0?q=address)
         	else if (url.startsWith(WebView.SCHEME_GEO)) {
            		try {
@@ -497,9 +476,9 @@ public class DroidGap extends Activity {
         		} catch (android.content.ActivityNotFoundException e) {
         			System.out.println("Error showing map "+url+": "+ e.toString());
         		}
-        		return true;        		
+        		return true;
         	}
-			
+
         	// If sending email (mailto:abc@corp.com)
         	else if (url.startsWith(WebView.SCHEME_MAILTO)) {
            		try {
@@ -509,9 +488,9 @@ public class DroidGap extends Activity {
         		} catch (android.content.ActivityNotFoundException e) {
         			System.out.println("Error sending email "+url+": "+ e.toString());
         		}
-        		return true;        		
+        		return true;
         	}
-        	
+
         	// If sms:5551212
             else if (url.startsWith("sms:")) {
             	try {
@@ -524,7 +503,7 @@ public class DroidGap extends Activity {
             		System.out.println("Error sending sms "+url+":"+ e.toString());
             	}
             	return true;
-            }  	
+            }
 
         	// If http, https or file
         	else if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://")) {
@@ -539,7 +518,7 @@ public class DroidGap extends Activity {
         		if (url.startsWith("file://") || mCtx.baseUrl.equals(newBaseUrl)) {
         			appView.loadUrl(url);
         		}
-  		
+
         		// If not our application, let default viewer handle
         		else {
         			try {
@@ -552,13 +531,13 @@ public class DroidGap extends Activity {
         		}
         		return true;
         	}
-        	
+
         	return false;
         }
-    	
+
         /**
          * Notify the host application that a page has finished loading.
-         * 
+         *
          * @param view			The webview initiating the callback.
          * @param url			The url of the page.
          */
@@ -573,7 +552,7 @@ public class DroidGap extends Activity {
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event)
-    {	
+    {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
         	if (mKey.isBound())
         	{
@@ -593,15 +572,15 @@ public class DroidGap extends Activity {
         		}
         	}
         }
-        
-        if (keyCode == KeyEvent.KEYCODE_MENU) 
+
+        if (keyCode == KeyEvent.KEYCODE_MENU)
         {
         	// This is where we launch the menu
         	appView.loadUrl("javascript:keyEvent.menuTrigger()");
         }
         return false;
     }
-	
+
     /**
      * Removes the splash screen from root view and adds the WebView
      */
@@ -609,7 +588,7 @@ public class DroidGap extends Activity {
     	root.removeView(splashScreen);
     	root.addView(appView);
     }
-    
+
     // This is required to start the camera activity!  It has to come from the previous activity
     public void startCamera()
     {
@@ -620,11 +599,11 @@ public class DroidGap extends Activity {
         imageUri = Uri.fromFile(photo);
         startActivityForResult(intent, 0);
     }
-    
+
     protected void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
     	   super.onActivityResult(requestCode, resultCode, intent);
-    	   
+
     	   if (resultCode == Activity.RESULT_OK) {
     		   Uri selectedImage = imageUri;
     	       getContentResolver().notifyChange(selectedImage, null);
@@ -641,5 +620,5 @@ public class DroidGap extends Activity {
     	   {
     		   launcher.failPicture("Did not complete!");
     	   }
-    }      
+    }
 }

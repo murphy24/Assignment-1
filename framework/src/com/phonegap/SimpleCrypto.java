@@ -1,9 +1,3 @@
-/*
- * Code originally found on Android Snippets
- * Contributed to snippets Ferenc Hechler
- * Copyright (c) 2009 Ferenc Hechler
- */
-
 package com.phonegap;
 
 import java.security.SecureRandom;
@@ -14,20 +8,20 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class SimpleCrypto {
-	
+
 	public static String encrypt(String seed, String cleartext) throws Exception {
 		byte[] rawKey = getRawKey(seed.getBytes());
 		byte[] result = encrypt(rawKey, cleartext.getBytes());
 		return toHex(result);
 	}
-	
+
 	public static String decrypt(String seed, String encrypted) throws Exception {
 		byte [] rawKey = getRawKey(seed.getBytes());
 		byte [] enc = toByte(encrypted);
 		byte [] result = decrypt(rawKey, enc);
 		return new String(result);
 	}
-	
+
 	public static byte[] getRawKey(byte [] seed) throws Exception {
 		KeyGenerator kgen = KeyGenerator.getInstance("AES");
 		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
@@ -37,7 +31,7 @@ public class SimpleCrypto {
 		byte[] raw = skey.getEncoded();
 		return raw;
 	}
-	
+
 	private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
 		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
 		Cipher cipher = Cipher.getInstance("AES");
@@ -45,7 +39,7 @@ public class SimpleCrypto {
 		byte[] encrypted = cipher.doFinal(clear);
 		return encrypted;
 	}
-	
+
 	private static byte[] decrypt(byte[] raw, byte[] encrypted) throws Exception {
 		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
 		Cipher cipher = Cipher.getInstance("AES");
@@ -53,17 +47,17 @@ public class SimpleCrypto {
 		byte[] decrypted = cipher.doFinal(encrypted);
 		return decrypted;
 	}
-	
+
 	public static String toHex(String txt)
 	{
 		return toHex(txt.getBytes());
 	}
-	
+
 	public static String fromHex(String hex)
 	{
 		return new String(toByte(hex));
 	}
-	
+
 	public static byte[] toByte(String hexString) {
 		int len = hexString.length()/2;
 		byte[] result = new byte[len];
@@ -73,7 +67,7 @@ public class SimpleCrypto {
 		}
 		return result;
 	}
-	
+
 	public static String toHex(byte[] buf) {
 		if (buf == null)
 		{
@@ -86,9 +80,9 @@ public class SimpleCrypto {
 		}
 		return result.toString();
 	}
-	
+
 	private final static String HEX = "01234567890ABCDEF";
-	
+
 	private static void appendHex(StringBuffer sb, byte b)
 	{
 		sb.append(HEX.charAt((b>>4)&0x0f)).append(HEX.charAt(b&0x0f));
